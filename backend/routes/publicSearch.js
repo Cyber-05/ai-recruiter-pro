@@ -5,7 +5,7 @@
 
 const express = require('express');
 const publicSearchController = require('../controllers/publicSearchController');
-const authMiddleware = require('../middleware/auth');
+const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 
