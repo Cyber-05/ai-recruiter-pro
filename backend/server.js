@@ -41,14 +41,19 @@ const mongoOptions = {
   w: 'majority',
   connectTimeoutMS: process.env.NODE_ENV === 'production' ? 60000 : 10000,
   heartbeatFrequencyMS: 10000,
-  bufferCommands: true,
-  maxIdleTimeMS: 45000
+  bufferCommands: false, // Disable buffering to prevent timeout issues
+  maxIdleTimeMS: 45000,
+  authSource: 'admin'
 };
 
-// Increase Mongoose buffer timeout for slow networks
-mongoose.set('bufferTimeoutMS', 60000);
+// Create MongoDB URI with retry parameters
+let mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro';
+if (!mongoURI.includes('retryWrites')) {
+  const separator = mongoURI.includes('?') ? '&' : '?';
+  mongoURI += separator + 'retryWrites=true&w=majority&maxPoolSize=10&serverSelectionTimeoutMS=60000';
+}
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', mongoOptions)
+mongoose.connect(mongoURI, mongoOptions)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch(err => {
     console.log('❌ MongoDB connection error:', err.message);
