@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Candidates - AI Recruiter Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #06060a;
+      --surface: rgba(255,255,255,0.03);
+      --text: #ffffff;
+      --text-2: #a1a1aa;
+      --brand: #7c5cff;
+      --brand-2: #00d4ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    .header {
+      margin-bottom: 40px;
+    }
+    
+    .header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #fff, #7c5cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header p {
+      color: var(--text-2);
+      font-size: 16px;
+    }
+    
+    .search-section {
+      background: rgba(124,92,255,0.05);
+      border: 1px solid rgba(124,92,255,0.2);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: rgba(124,92,255,0.05);
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white;
+      box-shadow: 0 8px 24px rgba(124,92,255,0.35);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(124,92,255,0.5);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .results-section {
+      display: none;
+    }
+    
+    .results-section.active {
+      display: block;
+    }
+    
+    .results-header {
+      margin-bottom: 24px;
+    }
+    
+    .results-header h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .results-header p {
+      color: var(--text-2);
+      font-size: 14px;
+    }
+    
+    .candidates-grid {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .candidate-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .candidate-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(124,92,255,0.3);
+      transform: translateX(4px);
+    }
+    
+    .candidate-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    
+    .candidate-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .match-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16,185,129,0.1);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    
+    .match-score.medium {
+      background: rgba(245,158,11,0.1);
+      border-color: rgba(245,158,11,0.3);
+    }
+    
+    .match-score.low {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.3);
+    }
+    
+    .score-value {
+      font-weight: 700;
+      color: var(--success);
+    }
+    
+    .match-score.medium .score-value {
+      color: var(--warning);
+    }
+    
+    .match-score.low .score-value {
+      color: var(--danger);
+    }
+    
+    .candidate-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .info-item {
+      font-size: 13px;
+    }
+    
+    .info-label {
+      color: var(--text-2);
+      margin-bottom: 4px;
+    }
+    
+    .info-value {
+      color: var(--text);
+      font-weight: 500;
+    }
+    
+    .candidate-reasoning {
+      background: rgba(0,212,255,0.05);
+      border-left: 3px solid var(--brand-2);
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    
+    .strengths-gaps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .strength-list, .gap-list {
+      font-size: 13px;
+    }
+    
+    .strength-list h4, .gap-list h4 {
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    .strength-list ul, .gap-list ul {
+      list-style: none;
+    }
+    
+    .strength-list li {
+      color: var(--success);
+      margin-bottom: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+    
+    .strength-list li:before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+    
+    .gap-list li {
+      color: var(--warning);
+      margin-bottom: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+    
+    .gap-list li:before {
+      content: '⚠';
+      position: absolute;
+      left: 0;
+    }
+    
+    .candidate-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 12px;
+      flex: 1;
+    }
+    
+    .btn-view {
+      background: rgba(124,92,255,0.2);
+      border: 1px solid rgba(124,92,255,0.3);
+      color: var(--brand-2);
+    }
+    
+    .btn-view:hover {
+      background: rgba(124,92,255,0.3);
+    }
+    
+    .btn-contact {
+      background: rgba(16,185,129,0.2);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--success);
+    }
+    
+    .btn-contact:hover {
+      background: rgba(16,185,129,0.3);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .error-message {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-2);
+    }
+    
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .strengths-gaps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔍 Find Top Candidates</h1>
+      <p>Use AI to find and match the best candidates for your job opening</p>
+    </div>
+    
+    <div class="search-section">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Job Title *</label>
+          <input type="text" id="jobTitle" placeholder="e.g., Senior Frontend Engineer">
+        </div>
+        
+        <div class="form-group">
+          <label>Required Skills (comma-separated)</label>
+          <input type="text" id="skills" placeholder="e.g., React, TypeScript, Node.js">
+        </div>
+        
+        <div class="form-group">
+          <label>Years of Experience</label>
+          <input type="number" id="experience" placeholder="e.g., 5" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label>Location Preference</label>
+          <input type="text" id="location" placeholder="e.g., Remote, San Francisco">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Education Required</label>
+        <input type="text" id="education" placeholder="e.g., Bachelor's in Computer Science">
+      </div>
+      
+      <button class="btn btn-primary" onclick="searchCandidates()" style="margin-top: 16px; width: 100%;">
+        🚀 Find Matching Candidates
+      </button>
+    </div>
+    
+    <div id="resultsSection" class="results-section">
+      <div class="results-header">
+        <h2>Matched Candidates</h2>
+        <p id="resultsInfo">Loading candidates...</p>
+      </div>
+      
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+      <div id="loadingSpinner" class="loading">
+        <div class="spinner"></div>
+      </div>
+      <div id="candidatesList" class="candidates-grid"></div>
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">😕</div>
+        <h3>No candidates found</h3>
+        <p>Try adjusting your search criteria</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+    
+    function getAuthToken() {
+      return localStorage.getItem('token');
+    }
+    
+    async function searchCandidates() {
+      const jobTitle = document.getElementById('jobTitle').value;
+      const skills = document.getElementById('skills').value.split(',').filter(s => s.trim());
+      const experience = document.getElementById('experience').value;
+      const location = document.getElementById('location').value;
+      const education = document.getElementById('education').value;
+      
+      if (!jobTitle) {
+        alert('Please enter a job title');
+        return;
+      }
+      
+      const resultsSection = document.getElementById('resultsSection');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const candidatesList = document.getElementById('candidatesList');
+      const emptyState = document.getElementById('emptyState');
+      const errorMessage = document.getElementById('errorMessage');
+      
+      resultsSection.classList.add('active');
+      loadingSpinner.style.display = 'block';
+      candidatesList.innerHTML = '';
+      emptyState.style.display = 'none';
+      errorMessage.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/candidate-match/find`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getAuthToken()}`
+          },
+          body: JSON.stringify({
+            jobTitle,
+            skills,
+            experience: experience ? parseInt(experience) : 0,
+            education,
+            location
+          })
+        });
+        
+        const data = await response.json();
+        loadingSpinner.style.display = 'none';
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Search failed');
+        }
+        
+        const candidates = data.candidates || [];
+        document.getElementById('resultsInfo').textContent = `Found ${candidates.length} matching candidates`;
+        
+        if (candidates.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+        
+        candidatesList.innerHTML = candidates.map(candidate => `
+          <div class="candidate-card">
+            <div class="candidate-header">
+              <div>
+                <div class="candidate-name">${candidate.firstName} ${candidate.lastName}</div>
+                <div style="color: var(--text-2); font-size: 13px; margin-top: 4px;">${candidate.company || 'Not specified'}</div>
+              </div>
+              <div class="match-score ${candidate.matchScore >= 70 ? '' : candidate.matchScore >= 50 ? 'medium' : 'low'}">
+                <span class="score-value">${candidate.matchScore}%</span>
+                <span>Match</span>
+              </div>
+            </div>
+            
+            <div class="candidate-info">
+              <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value" style="word-break: break-all;">${candidate.email}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Company</div>
+                <div class="info-value">${candidate.company || 'N/A'}</div>
+              </div>
+            </div>
+            
+            <div class="candidate-reasoning">
+              📝 ${candidate.reasoning}
+            </div>
+            
+            <div class="strengths-gaps">
+              <div class="strength-list">
+                <h4>✓ Strengths</h4>
+                <ul>
+                  ${(candidate.strengths || []).map(s => `<li>${s}</li>`).join('')}
+                </ul>
+              </div>
+              <div class="gap-list">
+                <h4>⚠ Gaps</h4>
+                <ul>
+                  ${(candidate.gaps || []).map(g => `<li>${g}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+            
+            <div class="candidate-actions">
+              <button class="btn btn-small btn-view" onclick="viewProfile('${candidate._id}')">
+                View Profile
+              </button>
+              <button class="btn btn-small btn-contact" onclick="sendMessage('${candidate.email}')">
+                Contact
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        loadingSpinner.style.display = 'none';
+        errorMessage.textContent = '❌ ' + error.message;
+        errorMessage.style.display = 'block';
+      }
+    }
+    
+    function viewProfile(candidateId) {
+      // In production, would open candidate profile page
+      alert('View profile: ' + candidateId);
+    }
+    
+    function sendMessage(email) {
+      window.location.href = `mailto:${email}?subject=Job Opportunity`;
+    }
+  </script>
+  <footer class="developer-footer">Developed By Kulwanth Kotagiri</footer>
+</body>
+</html>

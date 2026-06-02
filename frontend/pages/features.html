@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Features - AI Recruiter Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .feature-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .feature-content {
+            padding: 25px;
+        }
+
+        .feature-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .feature-list li {
+            color: #555;
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .feature-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .feature-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .stat {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .how-it-works {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            color: #666;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .section-title {
+                font-size: 1.3em;
+            }
+
+            .nav-links {
+                gap: 10px;
+                font-size: 0.9em;
+            }
+        }
+    <style>
+    .developer-footer {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.3);
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      border-left: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🚀 AI Recruiter Pro</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#recruiter">For Recruiters</a></li>
+                <li><a href="#seeker">For Job Seekers</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Complete Platform Features</h1>
+            <p>Everything you need to streamline your hiring process or find your next opportunity</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <h2>Powered by Intelligence</h2>
+            <div class="stats-grid">
+                <div>
+                    <div class="stat">100%</div>
+                    <div class="stat-label">AI-Powered</div>
+                </div>
+                <div>
+                    <div class="stat">∞</div>
+                    <div class="stat-label">Scalable</div>
+                </div>
+                <div>
+                    <div class="stat">24/7</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div>
+                    <div class="stat">⚡</div>
+                    <div class="stat-label">Real-time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recruiter Features -->
+        <div class="section" id="recruiter">
+            <h2 class="section-title">👔 Recruiter Tools</h2>
+
+            <div class="features-grid">
+                <!-- Dashboard -->
+                <div class="feature-card">
+                    <div class="feature-header">📊 Dashboard</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Get a complete overview of your recruiting activities at a glance</p>
+                        <ul class="feature-list">
+                            <li>Quick statistics and KPIs</li>
+                            <li>Candidate pipeline overview</li>
+                            <li>Recent activity feed</li>
+                            <li>Quick action shortcuts</li>
+                        </ul>
+                        <a href="frontend/pages/dashboard.html" class="feature-btn">View Dashboard</a>
+                    </div>
+                </div>
+
+                <!-- Post Jobs -->
+                <div class="feature-card">
+                    <div class="feature-header">📝 Post Jobs</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Create and manage unlimited job postings with detailed information</p>
+                        <ul class="feature-list">
+                            <li>Step-by-step job creation wizard</li>
+                            <li>Skills tagging system</li>
+                            <li>Benefits & compensation details</li>
+                            <li>Preview before publishing</li>
+                        </ul>
+                        <a href="frontend/pages/post-jobs.html" class="feature-btn">Post a Job</a>
+                    </div>
+                </div>
+
+                <!-- Find Candidates -->
+                <div class="feature-card">
+                    <div class="feature-header">🔍 Find Candidates</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Search and match candidates using AI-powered intelligence</p>
+                        <ul class="feature-list">
+                            <li>Intelligent candidate matching</li>
+                            <li>Match score calculation</li>
+                            <li>Strengths & gaps analysis</li>
+                            <li>View detailed profiles</li>
+                        </ul>
+                        <a href="frontend/pages/find-candidates.html" class="feature-btn">Find Candidates</a>
+                    </div>
+                </div>
+
+                <!-- Analytics -->
+                <div class="feature-card">
+                    <div class="feature-header">📈 Analytics</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Track comprehensive hiring metrics and performance analytics</p>
+                        <ul class="feature-list">
+                            <li>Candidate pipeline funnel</li>
+                            <li>Hiring performance metrics</li>
+                            <li>Application tracking</li>
+                            <li>Team statistics</li>
+                        </ul>
+                        <a href="frontend/pages/recruiter-analytics.html" class="feature-btn">View Analytics</a>
+                    </div>
+                </div>
+
+                <!-- Interview Generator -->
+                <div class="feature-card">
+                    <div class="feature-header">🎤 Interviews</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Schedule and manage interviews with candidates</p>
+                        <ul class="feature-list">
+                            <li>Interview scheduling</li>
+                            <li>Interview templates</li>
+                            <li>Feedback collection</li>
+                            <li>Interview tracking</li>
+                        </ul>
+                        <a href="frontend/pages/interviews.html" class="feature-btn">Manage Interviews</a>
+                    </div>
+                </div>
+
+                <!-- Resume Analyzer -->
+                <div class="feature-card">
+                    <div class="feature-header">📄 Resume Analysis</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Automatically analyze resumes and extract key information</p>
+                        <ul class="feature-list">
+                            <li>Resume parsing</li>
+                            <li>Skills extraction</li>
+                            <li>Experience analysis</li>
+                            <li>Score generation</li>
+                        </ul>
+                        <a href="frontend/pages/resumes.html" class="feature-btn">Analyze Resumes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Seeker Features -->
+        <div class="section" id="seeker">
+            <h2 class="section-title">💼 Job Seeker Tools</h2>
+
+            <div class="features-grid">
+                <!-- Job Search -->
+                <div class="feature-card">
+                    <div class="feature-header">🔎 Advanced Job Search</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Find your perfect job with advanced filtering and smart recommendations</p>
+                        <ul class="feature-list">
+                            <li>Advanced filtering options</li>
+                            <li>Match score display</li>
+                            <li>Smart recommendations</li>
+                            <li>Save favorite jobs</li>
+                        </ul>
+                        <a href="frontend/pages/job-search.html" class="feature-btn">Search Jobs</a>
+                    </div>
+                </div>
+
+                <!-- Job Seeker Profile -->
+                <div class="feature-card">
+                    <div class="feature-header">👤 Profile Management</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Create a comprehensive profile to showcase your qualifications</p>
+                        <ul class="feature-list">
+                            <li>Skills with proficiency levels</li>
+                            <li>Work history management</li>
+                            <li>Education details</li>
+                            <li>Job preferences</li>
+                        </ul>
+                        <a href="frontend/pages/job-seeker-profile.html" class="feature-btn">Edit Profile</a>
+                    </div>
+                </div>
+
+                <!-- Application Tracking -->
+                <div class="feature-card">
+                    <div class="feature-header">📧 Applications</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Track all your job applications and their status in one place</p>
+                        <ul class="feature-list">
+                            <li>Application history</li>
+                            <li>Status tracking</li>
+                            <li>Interview scheduling</li>
+                            <li>Recruiter messages</li>
+                        </ul>
+                        <a href="frontend/pages/job-search.html" class="feature-btn">View Applications</a>
+                    </div>
+                </div>
+
+                <!-- Saved Jobs -->
+                <div class="feature-card">
+                    <div class="feature-header">❤️ Saved Jobs</div>
+                    <div class="feature-content">
+                        <p class="feature-description">Keep track of interesting opportunities for later review</p>
+                        <ul class="feature-list">
+                            <li>Save favorite jobs</li>
+                            <li>Organized collections</li>
+                            <li>Quick apply shortcuts</li>
+                            <li>Job alerts</li>
+                        </ul>
+                        <a href="frontend/pages/job-search.html" class="feature-btn">View Saved</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+
+            <div class="section" style="margin-bottom: 0; padding: 0; border: none;">
+                <h3 style="font-size: 1.3em; color: #333; margin-bottom: 20px;">For Recruiters</h3>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Post a Job</div>
+                        <p class="step-description">Create detailed job postings with requirements and benefits</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Receive Applications</div>
+                        <p class="step-description">Candidates apply and their profiles are automatically scored</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Review Matches</div>
+                        <p class="step-description">See ranked candidates with detailed match analysis</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Hire Top Talent</div>
+                        <p class="step-description">Schedule interviews and make offers to the best candidates</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #f0f0f0; padding-top: 40px; margin-top: 40px;">
+                <h3 style="font-size: 1.3em; color: #333; margin-bottom: 20px;">For Job Seekers</h3>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Build Profile</div>
+                        <p class="step-description">Create a detailed profile highlighting your skills and experience</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Search Jobs</div>
+                        <p class="step-description">Find jobs matched to your profile with intelligence</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Apply</div>
+                        <p class="step-description">One-click applications to relevant positions</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Get Hired</div>
+                        <p class="step-description">Get interviewed and receive job offers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 12px; text-align: center;">
+            <h2 style="margin-bottom: 20px; font-size: 1.8em;">Ready to Get Started?</h2>
+            <p style="margin-bottom: 30px; font-size: 1.1em;">Join thousands of recruiters and job seekers using AI Recruiter Pro</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="frontend/pages/signup.html" style="background: white; color: #667eea; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">Sign Up</a>
+                <a href="frontend/pages/login.html" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 2px solid white; transition: all 0.2s;" onmouseover="this.style.background='white'; this.style.color='#667eea';" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.color='white';">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2026 AI Recruiter Pro. All rights reserved. Empowering intelligent hiring.</p>
+    </div>
+    <footer class="developer-footer">Developed By Kulwanth Kotagiri</footer>
+</body>
+</html>

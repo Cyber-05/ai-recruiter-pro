@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Analytics - AI Recruiter Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-card.jobs {
+            border-left-color: #3b82f6;
+        }
+
+        .stat-card.applications {
+            border-left-color: #10b981;
+        }
+
+        .stat-card.hired {
+            border-left-color: #f59e0b;
+        }
+
+        .stat-card.conversion {
+            border-left-color: #8b5cf6;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .stat-change {
+            font-size: 0.85em;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .stat-change.up {
+            color: #10b981;
+        }
+
+        .stat-change.down {
+            color: #ef4444;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            min-height: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: translateY(-5px);
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85em;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .funnel-step {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .funnel-step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .funnel-step-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .funnel-step-count {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .funnel-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .funnel-percentage {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .applications-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .application-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .application-item:last-child {
+            border-bottom: none;
+        }
+
+        .application-info {
+            flex: 1;
+        }
+
+        .application-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .application-job {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 3px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-applied {
+            background: #dbeafe;
+            color: #0c3c7a;
+        }
+
+        .status-shortlisted {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-interviewed {
+            background: #fed7aa;
+            color: #7c2d12;
+        }
+
+        .status-offered {
+            background: #f0d9ff;
+            color: #6b21a8;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .metric-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Recruiter Analytics</h1>
+            <p>Track your hiring metrics and candidate pipeline</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card jobs">
+                <div class="stat-value" id="totalJobs">0</div>
+                <div class="stat-label">Jobs Posted</div>
+                <div class="stat-change up">↑ 2 this month</div>
+            </div>
+
+            <div class="stat-card applications">
+                <div class="stat-value" id="totalApplications">0</div>
+                <div class="stat-label">Applications Received</div>
+                <div class="stat-change up">↑ 15 new this week</div>
+            </div>
+
+            <div class="stat-card hired">
+                <div class="stat-value" id="successfulHires">0</div>
+                <div class="stat-label">Successful Hires</div>
+                <div class="stat-change up">↑ 1 this month</div>
+            </div>
+
+            <div class="stat-card conversion">
+                <div class="stat-value" id="conversionRate">0%</div>
+                <div class="stat-label">Conversion Rate</div>
+                <div class="stat-change">Application → Offer</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Candidate Pipeline -->
+                <div class="section">
+                    <h2>📈 Candidate Pipeline</h2>
+
+                    <div class="funnel-container">
+                        <div class="funnel-step">
+                            <div class="funnel-step-header">
+                                <span class="funnel-step-title">👥 Applied</span>
+                                <span class="funnel-step-count" id="stageApplied">0</span>
+                            </div>
+                            <div class="funnel-bar" id="barApplied" style="width: 100%;"></div>
+                            <div class="funnel-percentage" id="percentApplied">100%</div>
+                        </div>
+
+                        <div class="funnel-step">
+                            <div class="funnel-step-header">
+                                <span class="funnel-step-title">✅ Shortlisted</span>
+                                <span class="funnel-step-count" id="stageShortlisted">0</span>
+                            </div>
+                            <div class="funnel-bar" id="barShortlisted"></div>
+                            <div class="funnel-percentage" id="percentShortlisted">0%</div>
+                        </div>
+
+                        <div class="funnel-step">
+                            <div class="funnel-step-header">
+                                <span class="funnel-step-title">🎤 Interviewed</span>
+                                <span class="funnel-step-count" id="stageInterviewed">0</span>
+                            </div>
+                            <div class="funnel-bar" id="barInterviewed"></div>
+                            <div class="funnel-percentage" id="percentInterviewed">0%</div>
+                        </div>
+
+                        <div class="funnel-step">
+                            <div class="funnel-step-header">
+                                <span class="funnel-step-title">🎉 Offered</span>
+                                <span class="funnel-step-count" id="stageOffered">0</span>
+                            </div>
+                            <div class="funnel-bar" id="barOffered"></div>
+                            <div class="funnel-percentage" id="percentOffered">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applications Activity -->
+                <div class="section" style="margin-top: 20px;">
+                    <h2>📋 Recent Applications</h2>
+
+                    <div class="filters">
+                        <select class="filter-select" id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="applied">Applied</option>
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="interviewed">Interviewed</option>
+                            <option value="offered">Offered</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+
+                        <select class="filter-select" id="filterJob">
+                            <option value="">All Jobs</option>
+                        </select>
+
+                        <button class="btn-action" onclick="loadApplications()">🔄 Refresh</button>
+                    </div>
+
+                    <div class="applications-list" id="applicationsList">
+                        <div class="empty-state">
+                            <p>No applications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Hiring Performance -->
+                <div class="section">
+                    <h2>⚡ Hiring Performance</h2>
+
+                    <div class="metric-row">
+                        <div class="metric-box">
+                            <div class="metric-value" id="avgTimeToHire">0</div>
+                            <div class="metric-label">Avg Days to Hire</div>
+                        </div>
+
+                        <div class="metric-box">
+                            <div class="metric-value" id="timeToFill">0</div>
+                            <div class="metric-label">Avg Time to Fill</div>
+                        </div>
+
+                        <div class="metric-box">
+                            <div class="metric-value" id="appsPerJob">0</div>
+                            <div class="metric-label">Apps per Job</div>
+                        </div>
+
+                        <div class="metric-box">
+                            <div class="metric-value" id="qualityScore">--</div>
+                            <div class="metric-label">Quality Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Performing Jobs -->
+                <div class="section" style="margin-top: 20px;">
+                    <h2>⭐ Top Jobs</h2>
+
+                    <div id="topJobsList">
+                        <div class="empty-state">
+                            <p>No job data available</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Performance -->
+                <div class="section" style="margin-top: 20px;">
+                    <h2>👥 Team Stats</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                            <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Active Recruiters</div>
+                            <div style="font-size: 1.8em; font-weight: 700; color: #667eea;" id="activeRecruiters">1</div>
+                        </div>
+
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                            <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Open Positions</div>
+                            <div style="font-size: 1.8em; font-weight: 700; color: #667eea;" id="openPositions">0</div>
+                        </div>
+
+                        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                            <div style="font-weight: 600; color: #333; margin-bottom: 5px;">Hiring Rate</div>
+                            <div style="font-size: 1.8em; font-weight: 700; color: #667eea;" id="hiringRate">0/mo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnalytics();
+            loadApplications();
+        });
+
+        async function loadAnalytics() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE}/jobs/recruiter-analytics`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load analytics');
+
+                const data = await response.json();
+                const analytics = data.analytics;
+
+                // Update metrics
+                document.getElementById('totalJobs').textContent = analytics.totalJobsPosted || 0;
+                document.getElementById('totalApplications').textContent = analytics.totalApplications || 0;
+                document.getElementById('successfulHires').textContent = analytics.offeredCandidates || 0;
+                document.getElementById('conversionRate').textContent = analytics.conversionRate || 0 + '%';
+
+                // Update pipeline
+                const total = analytics.totalApplications || 1;
+                const shortlisted = analytics.shortlistedCandidates || 0;
+                const interviewed = analytics.totalApplications * 0.3 || 0; // Estimated
+                const offered = analytics.offeredCandidates || 0;
+
+                document.getElementById('stageApplied').textContent = total;
+                document.getElementById('stageShortlisted').textContent = shortlisted;
+                document.getElementById('stageInterviewed').textContent = Math.floor(interviewed);
+                document.getElementById('stageOffered').textContent = offered;
+
+                // Update percentages
+                document.getElementById('percentApplied').textContent = '100%';
+                document.getElementById('percentShortlisted').textContent = shortlisted > 0 ? Math.round((shortlisted / total) * 100) + '%' : '0%';
+                document.getElementById('percentInterviewed').textContent = interviewed > 0 ? Math.round((interviewed / total) * 100) + '%' : '0%';
+                document.getElementById('percentOffered').textContent = offered > 0 ? Math.round((offered / total) * 100) + '%' : '0%';
+
+                // Update bar widths
+                document.getElementById('barShortlisted').style.width = ((shortlisted / total) * 100) + '%';
+                document.getElementById('barInterviewed').style.width = ((interviewed / total) * 100) + '%';
+                document.getElementById('barOffered').style.width = ((offered / total) * 100) + '%';
+
+                // Update performance metrics
+                document.getElementById('avgTimeToHire').textContent = analytics.averageTimeToHire || 0;
+                document.getElementById('appsPerJob').textContent = analytics.avgApplicationsPerJob?.toFixed(1) || '0';
+                document.getElementById('openPositions').textContent = analytics.totalJobsPosted || 0;
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        async function loadApplications() {
+            try {
+                const token = localStorage.getItem('token');
+                const status = document.getElementById('filterStatus')?.value || '';
+                const job = document.getElementById('filterJob')?.value || '';
+
+                const params = new URLSearchParams({
+                    status,
+                    jobId: job,
+                    limit: 10
+                });
+
+                const response = await fetch(`${API_BASE}/jobs/recruiter-applications?${params}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load applications');
+
+                const data = await response.json();
+                displayApplications(data.applications || []);
+
+                // Populate job filter
+                populateJobFilter(data.applications || []);
+
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        function displayApplications(applications) {
+            const container = document.getElementById('applicationsList');
+
+            if (!applications || applications.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No applications found</p></div>';
+                return;
+            }
+
+            container.innerHTML = applications.map(app => {
+                const statusClass = `status-${app.status}`;
+                return `
+                    <div class="application-item">
+                        <div class="application-info">
+                            <div class="application-name">${app.candidateId?.firstName || 'Candidate'} ${app.candidateId?.lastName || ''}</div>
+                            <div class="application-job">${app.jobId?.title || 'Unknown Job'}</div>
+                        </div>
+                        <span class="status-badge ${statusClass}">${app.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateJobFilter(applications) {
+            const jobFilter = document.getElementById('filterJob');
+            const jobs = [...new Set(applications.map(a => a.jobId?._id))].filter(Boolean);
+
+            if (jobs.length > 0) {
+                const currentValue = jobFilter.value;
+                jobFilter.innerHTML = '<option value="">All Jobs</option>' +
+                    jobs.map(jobId => `<option value="${jobId}">${applications.find(a => a.jobId?._id === jobId)?.jobId?.title}</option>`).join('');
+                jobFilter.value = currentValue;
+            }
+        }
+    </script>
+  <footer class="developer-footer">Developed By Kulwanth Kotagiri</footer>
+</body>
+</html>

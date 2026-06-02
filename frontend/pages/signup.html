@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - AI Recruiter Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #06060a;
+      --surface: rgba(255,255,255,0.03);
+      --text: #ffffff;
+      --text-2: #a1a1aa;
+      --brand: #7c5cff;
+      --brand-2: #00d4ff;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .auth-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+    }
+    
+    .auth-left {
+      background: linear-gradient(135deg, rgba(124,92,255,0.1), rgba(0,212,255,0.05));
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .auth-left::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124,92,255,0.2), transparent);
+      top: -200px;
+      left: -100px;
+      filter: blur(60px);
+    }
+    
+    .auth-left-content { position: relative; z-index: 1; }
+    
+    .auth-left h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #fff, #7c5cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .auth-left p {
+      font-size: 18px;
+      color: var(--text-2);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    
+    .features-list {
+      list-style: none;
+    }
+    
+    .features-list li {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 16px;
+      color: var(--text-2);
+    }
+    
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--brand);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    
+    .auth-right {
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--bg);
+    }
+    
+    .auth-form {
+      max-width: 400px;
+    }
+    
+    .auth-header {
+      margin-bottom: 40px;
+    }
+    
+    .auth-header h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    
+    .auth-header p {
+      color: var(--text-2);
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: rgba(124,92,255,0.05);
+    }
+    
+    .form-group input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #7c5cff, #00d4ff);
+      color: white;
+      box-shadow: 0 8px 24px rgba(124,92,255,0.35);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(124,92,255,0.5);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+    }
+    
+    .auth-footer p {
+      color: var(--text-2);
+    }
+    
+    .auth-footer a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      background: rgba(239,68,68,0.1);
+      color: #fca5a5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      border: 1px solid rgba(239,68,68,0.3);
+      display: none;
+    }
+    
+    .success-message {
+      background: rgba(16,185,129,0.1);
+      color: #6ee7b7;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      border: 1px solid rgba(16,185,129,0.3);
+      display: none;
+    }
+    
+    .info-message {
+      background: rgba(59,130,246,0.1);
+      color: #93c5fd;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      border: 1px solid rgba(59,130,246,0.3);
+      display: none;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    
+    .form-section {
+      display: none;
+    }
+    
+    .form-section.active {
+      display: block;
+    }
+    
+    .otp-input-group {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0;
+    }
+    
+    .otp-input {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      border-radius: 10px !important;
+      background: rgba(255,255,255,0.02) !important;
+    }
+    
+    .resend-link {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    
+    .resend-link a {
+      color: var(--brand);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .resend-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .timer {
+      color: var(--text-2);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .developer-footer {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      padding: 12px 20px;
+      background: rgba(0,0,0,0.3);
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      border-left: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 768px) {
+      .auth-container { grid-template-columns: 1fr; }
+      .auth-left { display: none; }
+      .auth-right { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-left">
+      <div class="auth-left-content">
+        <h1><span class="gradient-text">Join 12,000+ Recruiters</span></h1>
+        <p>Transform your hiring process with AI-powered resume analysis, interview generation, and candidate ranking.</p>
+        <ul class="features-list">
+          <li><span class="check-icon">✓</span> Analyze 1,000+ resumes instantly</li>
+          <li><span class="check-icon">✓</span> AI-powered candidate insights</li>
+          <li><span class="check-icon">✓</span> Generate custom interview questions</li>
+          <li><span class="check-icon">✓</span> Advanced ATS scoring</li>
+          <li><span class="check-icon">✓</span> 14-day free trial, no card required</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="auth-right">
+      <form class="auth-form">
+        <!-- Signup Form Section -->
+        <div id="signupSection" class="form-section active">
+          <div class="auth-header">
+            <h2>Create Account</h2>
+            <p>Start your free 14-day trial today</p>
+          </div>
+          
+          <div class="error-message" id="signupError"></div>
+          <div class="info-message" id="signupInfo">
+            ℹ️ Only Gmail addresses are accepted
+          </div>
+          
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="John" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Doe" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="company">Company</label>
+            <input type="text" id="company" placeholder="Your Company">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email (Gmail Only)</label>
+            <input type="email" id="email" placeholder="you@gmail.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="choose_username" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+          </div>
+          
+          <button type="button" class="btn btn-primary" id="signupBtn" onclick="handleSignup()">Create Account</button>
+          
+          <div class="auth-footer">
+            <p>Already have an account? <a href="login.html">Sign in</a></p>
+            <p style="margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.3);">
+              By signing up, you agree to our Terms of Service and Privacy Policy
+            </p>
+          </div>
+        </div>
+        
+        <!-- OTP Verification Section -->
+        <div id="otpSection" class="form-section">
+          <div class="auth-header">
+            <h2>Verify Email</h2>
+            <p>Enter the 6-digit code sent to your email</p>
+          </div>
+          
+          <div class="error-message" id="otpError"></div>
+          <div class="success-message" id="otpSuccess"></div>
+          
+          <div class="form-group">
+            <label>Verification Code</label>
+            <div class="otp-input-group">
+              <input type="text" class="otp-input" id="otp1" maxlength="1" placeholder="0">
+              <input type="text" class="otp-input" id="otp2" maxlength="1" placeholder="0">
+              <input type="text" class="otp-input" id="otp3" maxlength="1" placeholder="0">
+              <input type="text" class="otp-input" id="otp4" maxlength="1" placeholder="0">
+              <input type="text" class="otp-input" id="otp5" maxlength="1" placeholder="0">
+              <input type="text" class="otp-input" id="otp6" maxlength="1" placeholder="0">
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-primary" id="verifyBtn" onclick="handleVerifyOTP()">Verify Code</button>
+          
+          <div class="resend-link">
+            <a onclick="handleResendOTP()">Didn't receive code? Resend</a>
+            <div class="timer" id="timer"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="../config.js"></script>
+  <script>
+    let userEmail = '';
+    let resendTimer = 0;
+    
+    // Auto-move between OTP inputs
+    document.querySelectorAll('.otp-input').forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        if (e.target.value && index < 5) {
+          document.getElementById(`otp${index + 2}`).focus();
+        }
+      });
+      
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          document.getElementById(`otp${index}`).focus();
+        }
+      });
+    });
+    
+    async function handleSignup() {
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const company = document.getElementById('company').value;
+      const email = document.getElementById('email').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      const btn = document.getElementById('signupBtn');
+      const errorMsg = document.getElementById('signupError');
+      
+      // Validate Gmail
+      if (!email.toLowerCase().endsWith('@gmail.com')) {
+        errorMsg.textContent = '❌ Only Gmail addresses are accepted';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>Creating account...';
+      errorMsg.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            company,
+            email,
+            username,
+            password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          userEmail = email;
+          document.getElementById('signupSection').classList.remove('active');
+          document.getElementById('otpSection').classList.add('active');
+          startResendTimer();
+        } else {
+          throw new Error(data.error || 'Signup failed');
+        }
+      } catch (error) {
+        errorMsg.textContent = '❌ ' + error.message;
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Create Account';
+      }
+    }
+    
+    async function handleVerifyOTP() {
+      const otp = [1,2,3,4,5,6].map(i => document.getElementById(`otp${i}`).value).join('');
+      
+      if (otp.length !== 6) {
+        document.getElementById('otpError').textContent = '❌ Please enter all 6 digits';
+        document.getElementById('otpError').style.display = 'block';
+        return;
+      }
+      
+      const btn = document.getElementById('verifyBtn');
+      const errorMsg = document.getElementById('otpError');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>Verifying...';
+      errorMsg.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: userEmail,
+            otp: otp
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          document.getElementById('otpSuccess').textContent = '✓ Email verified! Redirecting...';
+          document.getElementById('otpSuccess').style.display = 'block';
+          setTimeout(() => window.location.href = 'dashboard.html', 2000);
+        } else {
+          throw new Error(data.error || 'Verification failed');
+        }
+      } catch (error) {
+        errorMsg.textContent = '❌ ' + error.message;
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Verify Code';
+      }
+    }
+    
+    async function handleResendOTP() {
+      if (resendTimer > 0) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/auth/resend-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('otpSuccess').textContent = '✓ New code sent to your email!';
+          document.getElementById('otpSuccess').style.display = 'block';
+          startResendTimer();
+          setTimeout(() => document.getElementById('otpSuccess').style.display = 'none', 3000);
+        } else {
+          throw new Error(data.error || 'Failed to resend');
+        }
+      } catch (error) {
+        document.getElementById('otpError').textContent = '❌ ' + error.message;
+        document.getElementById('otpError').style.display = 'block';
+      }
+    }
+    
+    function startResendTimer() {
+      resendTimer = 60;
+      updateTimer();
+    }
+    
+    function updateTimer() {
+      const timerEl = document.getElementById('timer');
+      if (resendTimer > 0) {
+        timerEl.textContent = `Resend in ${resendTimer}s`;
+        resendTimer--;
+        setTimeout(updateTimer, 1000);
+      } else {
+        timerEl.textContent = '';
+      }
+    }
+  </script>
+  <footer class="developer-footer">Developed By Kulwanth Kotagiri</footer>
+</body>
+</html>
