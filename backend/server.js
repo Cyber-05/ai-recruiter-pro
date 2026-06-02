@@ -53,16 +53,51 @@ if (!mongoURI.includes('retryWrites')) {
   mongoURI += separator + 'retryWrites=true&w=majority&maxPoolSize=10&serverSelectionTimeoutMS=60000';
 }
 
+let mongoConnected = false;
+
 mongoose.connect(mongoURI, mongoOptions)
-  .then(() => console.log('✅ MongoDB connected successfully'))
+  .then(() => {
+    mongoConnected = true;
+    console.log('✅ MongoDB connected successfully');
+  })
   .catch(err => {
     console.log('❌ MongoDB connection error:', err.message);
     // Attempt to reconnect after delay
     setTimeout(() => {
       mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', mongoOptions)
+        .then(() => {
+          mongoConnected = true;
+          console.log('✅ MongoDB reconnected successfully');
+        })
         .catch(err => console.log('❌ MongoDB reconnection failed:', err.message));
     }, 5000);
   });
+
+// Monitor MongoDB connection state
+mongoose.connection.on('connected', () => {
+  mongoConnected = true;
+  console.log('✅ Mongoose connected to MongoDB');
+});
+
+mongoose.connection.on('disconnected', () => {
+  mongoConnected = false;
+  console.log('⚠️ Mongoose disconnected from MongoDB');
+});
+
+// Middleware to ensure database is ready before processing API requests
+app.use((req, res, next) => {
+  // Allow health check and static files without DB
+  if (req.path === '/api/health' || !req.path.startsWith('/api/')) {
+    return next();
+  }
+  
+  // For API requests, check MongoDB connection
+  if (mongoConnected) {
+    next();
+  } else {
+    res.status(503).json({ error: 'Database not ready - please try again in a moment' });
+  }
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
