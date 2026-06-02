@@ -37,6 +37,26 @@ app.use('/api/candidate-match', require('./routes/candidateMatch'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '..')));
+
+// SPA fallback - serve index.html for non-API routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../index.html'));
+});
+
+app.get(/^(?!\/api\/)/, (req, res) => {
+  // Don't fallback for actual files that don't exist
+  const filePath = path.join(__dirname, '..', req.path);
+  if (req.path.includes('.') && !req.path.includes('.html')) {
+    return res.status(404).send('Not found');
+  }
+  res.sendFile(path.join(__dirname, '../index.html'), (err) => {
+    if (err) res.status(404).send('Not found');
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'API is running', timestamp: new Date() });
