@@ -21,9 +21,26 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  family: 4
 }).then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+  .catch(err => {
+    console.log('MongoDB connection error:', err);
+    // Attempt to reconnect
+    setTimeout(() => {
+      mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        family: 4
+      }).catch(err => console.log('MongoDB reconnection failed:', err));
+    }, 5000);
+  });
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
