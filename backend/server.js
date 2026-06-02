@@ -34,14 +34,19 @@ const mongoOptions = {
   useUnifiedTopology: true,
   maxPoolSize: 10,
   minPoolSize: 2,
-  serverSelectionTimeoutMS: process.env.NODE_ENV === 'production' ? 30000 : 5000,
-  socketTimeoutMS: process.env.NODE_ENV === 'production' ? 120000 : 45000,
+  serverSelectionTimeoutMS: process.env.NODE_ENV === 'production' ? 60000 : 5000,
+  socketTimeoutMS: process.env.NODE_ENV === 'production' ? 180000 : 45000,
   family: 4,
   retryWrites: true,
   w: 'majority',
-  connectTimeoutMS: process.env.NODE_ENV === 'production' ? 30000 : 10000,
-  heartbeatFrequencyMS: 10000
+  connectTimeoutMS: process.env.NODE_ENV === 'production' ? 60000 : 10000,
+  heartbeatFrequencyMS: 10000,
+  bufferCommands: true,
+  maxIdleTimeMS: 45000
 };
+
+// Increase Mongoose buffer timeout for slow networks
+mongoose.set('bufferTimeoutMS', 60000);
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', mongoOptions)
   .then(() => console.log('✅ MongoDB connected successfully'))
