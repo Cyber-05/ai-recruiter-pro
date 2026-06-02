@@ -18,27 +18,39 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Request timeout middleware - Give requests more time on production
+app.use((req, res, next) => {
+  const timeout = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60s on prod, 30s locally
+  res.setTimeout(timeout, () => {
+    console.warn(`Request timeout for ${req.method} ${req.url}`);
+    res.status(503).json({ error: 'Request timeout - server busy' });
+  });
+  next();
+});
+
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', {
+const mongoOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   maxPoolSize: 10,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  family: 4
-}).then(() => console.log('MongoDB connected'))
+  minPoolSize: 2,
+  serverSelectionTimeoutMS: process.env.NODE_ENV === 'production' ? 30000 : 5000,
+  socketTimeoutMS: process.env.NODE_ENV === 'production' ? 120000 : 45000,
+  family: 4,
+  retryWrites: true,
+  w: 'majority',
+  connectTimeoutMS: process.env.NODE_ENV === 'production' ? 30000 : 10000,
+  heartbeatFrequencyMS: 10000
+};
+
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', mongoOptions)
+  .then(() => console.log('✅ MongoDB connected successfully'))
   .catch(err => {
-    console.log('MongoDB connection error:', err);
-    // Attempt to reconnect
+    console.log('❌ MongoDB connection error:', err.message);
+    // Attempt to reconnect after delay
     setTimeout(() => {
-      mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        maxPoolSize: 10,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 45000,
-        family: 4
-      }).catch(err => console.log('MongoDB reconnection failed:', err));
+      mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-recruiter-pro', mongoOptions)
+        .catch(err => console.log('❌ MongoDB reconnection failed:', err.message));
     }, 5000);
   });
 
