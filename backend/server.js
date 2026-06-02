@@ -38,22 +38,33 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.use(express.static(path.join(__dirname, '..')));
+const frontendPath = path.join(__dirname, '../frontend');
+const rootPath = path.join(__dirname, '..');
 
-// SPA fallback - serve index.html for non-API routes
+app.use(express.static(frontendPath));
+app.use(express.static(rootPath));
+
+// SPA fallback routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../index.html'));
+  res.sendFile(path.join(rootPath, 'index.html'));
 });
 
-app.get(/^(?!\/api\/)/, (req, res) => {
-  // Don't fallback for actual files that don't exist
-  const filePath = path.join(__dirname, '..', req.path);
-  if (req.path.includes('.') && !req.path.includes('.html')) {
-    return res.status(404).send('Not found');
+// Catch-all for SPA routing
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return next(); // Let API error handling take care of it
   }
-  res.sendFile(path.join(__dirname, '../index.html'), (err) => {
-    if (err) res.status(404).send('Not found');
+  // Serve the requested file if it exists in frontend or root
+  const filePath = path.join(frontendPath, req.path);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      // If file doesn't exist, serve index.html for SPA routing
+      res.sendFile(path.join(rootPath, 'index.html'), (indexErr) => {
+        if (indexErr) {
+          res.status(404).json({ error: 'Not found' });
+        }
+      });
+    }
   });
 });
 
